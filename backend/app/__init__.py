@@ -63,11 +63,8 @@ def create_app(config_class=Config):
         logger.debug(f"响应: {response.status_code}")
         return response
     
-    # 注册蓝图
-    from .api import graph_bp, simulation_bp, report_bp, football_bp
-    app.register_blueprint(graph_bp, url_prefix='/api/graph')
-    app.register_blueprint(simulation_bp, url_prefix='/api/simulation')
-    app.register_blueprint(report_bp, url_prefix='/api/report')
+    # 注册蓝图 - 只注册足球模块
+    from .api import football_bp
     app.register_blueprint(football_bp, url_prefix='/api/football')
 
     # 初始化足球模块数据库连接（可选，配置了密码才初始化）
