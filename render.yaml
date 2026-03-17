@@ -1,17 +1,18 @@
-services:
-  # PostgreSQL Database
-  - type: psql
-    name: mirofish-db
-    plan: free
-    version: "15"
+# Render Blueprint for MiroFish Backend
+# 使用方法：
+# 1. 登入 render.com
+# 2. New + > Blueprint
+# 3. 選擇 superronclaw/MiroFish
 
-  # Backend Web Service
+# 注意：需要先手動創建 PostgreSQL 數據庫
+
+services:
   - type: web
     name: mirofish-backend
     env: python
     pythonVersion: "3.11"
-    buildCommand: cd backend && pip install -r requirements.txt
-    startCommand: cd backend && python run.py
+    buildCommand: pip install -r requirements.txt
+    startCommand: python run.py
     envVars:
       - key: FLASK_DEBUG
         value: "False"
@@ -27,18 +28,14 @@ services:
         value: anthropic/claude-haiku-4.5
       - key: FOOTBALL_DATA_API_KEY
         sync: false
+      # 數據庫配置 - 稍後手動填寫
       - key: FOOTBALL_DB_HOST
-        fromDB: mirofish-db
-        attribute: host
+        sync: false
       - key: FOOTBALL_DB_PORT
-        fromDB: mirofish-db
-        attribute: port
+        value: "5432"
       - key: FOOTBALL_DB_NAME
-        fromDB: mirofish-db
-        attribute: database
+        sync: false
       - key: FOOTBALL_DB_USER
-        fromDB: mirofish-db
-        attribute: user
+        sync: false
       - key: FOOTBALL_DB_PASSWORD
-        fromDB: mirofish-db
-        attribute: password
+        sync: false
