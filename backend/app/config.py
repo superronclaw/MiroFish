@@ -4,6 +4,7 @@
 """
 
 import os
+import warnings
 from dotenv import load_dotenv
 
 # 加载项目根目录的 .env 文件
@@ -128,8 +129,6 @@ class Config:
         errors = []
         if not cls.LLM_API_KEY:
             errors.append("LLM_API_KEY 未配置")
-        if not cls.ZEP_API_KEY:
-            errors.append("ZEP_API_KEY 未配置")
         return errors
 
     @classmethod
