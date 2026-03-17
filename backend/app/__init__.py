@@ -63,18 +63,31 @@ def create_app(config_class=Config):
         return response
     
     # 注册蓝图
-    from .api import graph_bp, simulation_bp, report_bp
+    from .api import graph_bp, simulation_bp, report_bp, football_bp
     app.register_blueprint(graph_bp, url_prefix='/api/graph')
     app.register_blueprint(simulation_bp, url_prefix='/api/simulation')
     app.register_blueprint(report_bp, url_prefix='/api/report')
-    
+    app.register_blueprint(football_bp, url_prefix='/api/football')
+
+    # 初始化足球模块数据库连接（可选，配置了密码才初始化）
+    if config_class.FOOTBALL_DB_PASSWORD:
+        try:
+            from .utils.db import init_db
+            init_db(config_class)
+            if should_log_startup:
+                logger.info("足球模块 PostgreSQL 连接池已初始化")
+        except Exception as e:
+            logger.warning(f"足球模块数据库初始化失败（非致命）: {e}")
+    elif should_log_startup:
+        logger.info("足球模块数据库未配置，跳过初始化")
+
     # 健康检查
     @app.route('/health')
     def health():
         return {'status': 'ok', 'service': 'MiroFish Backend'}
-    
+
     if should_log_startup:
         logger.info("MiroFish Backend 启动完成")
-    
+
     return app
 

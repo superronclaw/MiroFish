@@ -1,0 +1,44 @@
+services:
+  # PostgreSQL Database
+  - type: psql
+    name: mirofish-db
+    plan: free
+    version: "15"
+
+  # Backend Web Service
+  - type: web
+    name: mirofish-backend
+    env: python
+    pythonVersion: "3.11"
+    buildCommand: cd backend && pip install -r requirements.txt
+    startCommand: cd backend && python run.py
+    envVars:
+      - key: FLASK_DEBUG
+        value: "False"
+      - key: FLASK_HOST
+        value: "0.0.0.0"
+      - key: FLASK_PORT
+        value: "10000"
+      - key: LLM_API_KEY
+        sync: false
+      - key: LLM_BASE_URL
+        value: https://ai-gateway.happycapy.ai/api/v1/chat/completions
+      - key: LLM_MODEL_NAME
+        value: anthropic/claude-haiku-4.5
+      - key: FOOTBALL_DATA_API_KEY
+        sync: false
+      - key: FOOTBALL_DB_HOST
+        fromDB: mirofish-db
+        attribute: host
+      - key: FOOTBALL_DB_PORT
+        fromDB: mirofish-db
+        attribute: port
+      - key: FOOTBALL_DB_NAME
+        fromDB: mirofish-db
+        attribute: database
+      - key: FOOTBALL_DB_USER
+        fromDB: mirofish-db
+        attribute: user
+      - key: FOOTBALL_DB_PASSWORD
+        fromDB: mirofish-db
+        attribute: password

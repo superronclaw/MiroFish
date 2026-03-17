@@ -5,6 +5,8 @@ import SimulationView from '../views/SimulationView.vue'
 import SimulationRunView from '../views/SimulationRunView.vue'
 import ReportView from '../views/ReportView.vue'
 import InteractionView from '../views/InteractionView.vue'
+import FootballHome from '../views/FootballHome.vue'
+import FootballMatchView from '../views/FootballMatchView.vue'
 
 const routes = [
   {
@@ -40,6 +42,18 @@ const routes = [
     path: '/interaction/:reportId',
     name: 'Interaction',
     component: InteractionView,
+    props: true
+  },
+  // 足球预测系统
+  {
+    path: '/football',
+    name: 'Football',
+    component: FootballHome
+  },
+  {
+    path: '/football/match/:matchId',
+    name: 'FootballMatch',
+    component: FootballMatchView,
     props: true
   }
 ]

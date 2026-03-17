@@ -12,3 +12,6 @@ from . import graph  # noqa: E402, F401
 from . import simulation  # noqa: E402, F401
 from . import report  # noqa: E402, F401
 
+# 足球预测模块
+from .football import football_bp  # noqa: E402, F401
+

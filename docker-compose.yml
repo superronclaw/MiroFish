@@ -1,4 +1,25 @@
 services:
+  # ===== PostgreSQL 数据库（足球预测模块） =====
+  postgres:
+    image: postgres:16-alpine
+    container_name: mirofish-postgres
+    environment:
+      POSTGRES_DB: mirofish_football
+      POSTGRES_USER: mirofish
+      POSTGRES_PASSWORD: ${FOOTBALL_DB_PASSWORD:-mirofish2024}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/migrations/football_schema.sql:/docker-entrypoint-initdb.d/01-football-schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mirofish -d mirofish_football"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ===== MiroFish 主服务（前端 + 后端） =====
   mirofish:
     image: ghcr.io/666ghj/mirofish:latest
     # 加速镜像（如拉取缓慢可替换上方地址）
@@ -6,9 +27,23 @@ services:
     container_name: mirofish
     env_file:
       - .env
+    environment:
+      # 足球模块数据库连接（指向 postgres 容器）
+      FOOTBALL_DB_HOST: postgres
+      FOOTBALL_DB_PORT: 5432
+      FOOTBALL_DB_NAME: mirofish_football
+      FOOTBALL_DB_USER: mirofish
+      FOOTBALL_DB_PASSWORD: ${FOOTBALL_DB_PASSWORD:-mirofish2024}
     ports:
       - "3000:3000"
       - "5001:5001"
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
     volumes:
       - ./backend/uploads:/app/backend/uploads
+      - ./backend/data/models:/app/backend/data/models
+
+volumes:
+  postgres_data:
